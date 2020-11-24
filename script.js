@@ -1,4 +1,4 @@
-const api_key = "your zomato provided api key";
+const api_key = "456dac54f8ffe11bc137b4566412057c";
 const form = document.getElementById("query-form");
 
 form.addEventListener("submit", (event) => {
@@ -36,7 +36,7 @@ function getLocation(query) {
         totalResults = data["results_found"];
         start = data["results_start"];
         resultsShown = data["results_shown"];
-        getRestaurants(entityId, entityType, title, 1);
+        getRestaurants(entityId, entityType, title, 0);
       });
     })
     .catch(function (err) {
@@ -60,7 +60,7 @@ function getRestaurants(entityId, entityType, title, startPoint) {
     q +
     "&start=" +
     start +
-    "&count=40&radius=5000&sort=real_distance&order=asc";
+    "&count=20&radius=5000&sort=real_distance&order=asc";
   fetch(urlLocationDetails, {
     headers: {
       "user-key": api_key,
@@ -71,7 +71,7 @@ function getRestaurants(entityId, entityType, title, startPoint) {
 
       response.json().then(function (data) {
         let size = data["restaurants"].length;
-        totalResults = data["results-found"];
+        totalResults = data["results_found"];
         for (var i = 0; i < size; i++) {
           restaurantsList.push([
             data["restaurants"][i]["restaurant"]["name"] +
@@ -92,14 +92,28 @@ function getRestaurants(entityId, entityType, title, startPoint) {
         for (var k of restaurantsList) {
           resList.appendChild(createElement(k));
         }
+        if (document.getElementById("load-more")) {
+          let item = document.getElementById("list-data");
+          let itemLoadMore = document.getElementById("load-more");
+          item.removeChild(itemLoadMore);
+        }
+
         let listDataRestaurants = document.getElementById("list-data");
         let buttonLoadMore = document.createElement("button");
         buttonLoadMore.setAttribute("id", "load-more");
         buttonLoadMore.textContent = "Load More";
         listDataRestaurants.appendChild(buttonLoadMore);
-        if (start >= totalResults) {
-          return;
+
+        if (start >= 100) {
+          let item = document.getElementById("list-data");
+          let itemLoadMore = document.getElementById("load-more");
+          item.removeChild(itemLoadMore);
         }
+
+        buttonLoadMore.addEventListener("click", (e) => {
+          e.preventDefault();
+          getRestaurants(entity_id, entity_type, q, start);
+        });
       });
     })
     .catch(function (err) {
