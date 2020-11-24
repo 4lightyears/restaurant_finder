@@ -1,4 +1,4 @@
-const api_key = "456dac54f8ffe11bc137b4566412057c";
+const api_key = "your zomato api key";
 const form = document.getElementById("query-form");
 
 form.addEventListener("submit", (event) => {
